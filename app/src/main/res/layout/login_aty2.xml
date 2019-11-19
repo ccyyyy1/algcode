@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="com.ex.cy.demo4.desinmode.mvvm.viewmodel.User" />
+
+        <import type="com.ex.cy.demo4.desinmode.mvvm.viewmodel.UserHandler" />
+
+        <variable
+            name="user"
+            type="com.ex.cy.demo4.desinmode.mvvm.viewmodel.User" />
+
+        <variable
+            name="userHandler"
+            type="com.ex.cy.demo4.desinmode.mvvm.viewmodel.UserHandler" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/login_user_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="user"
+            android:text="@={user.name,default=aaaa}" />
+
+        <EditText
+            android:id="@+id/login_pwd_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="pwd"
+            android:text="@={user.pwd}" />
+
+        <Button
+            android:id="@+id/login_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{()->userHandler.onLoginClick()}"
+            android:text="login" />
+
+        <ProgressBar
+            android:id="@+id/login_pb"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:indeterminateBehavior="repeat"
+            android:visibility="@{userHandler.progressVisiable,default=gone}" />
+
+    </LinearLayout>
+</layout>
