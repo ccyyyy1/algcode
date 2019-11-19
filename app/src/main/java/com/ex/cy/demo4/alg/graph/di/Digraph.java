@@ -7,7 +7,7 @@ import com.ex.cy.demo4.alg.graph.Graph;
 import java.util.Iterator;
 
 //有向图
-//内存：
+//内存：s
 // 填充=4，32机器字长
 // Digraph : 16+4+                                  （对象头 + 填充）
 // int e : 4

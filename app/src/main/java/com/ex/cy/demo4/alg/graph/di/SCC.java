@@ -89,10 +89,10 @@ public class SCC {
         List<String> peop = new LinkedList<>();
         peop.add("维尼");
         peop.add("赵家家丁");
-        peop.add("赵家真理部");
-        peop.add("赵家传话筒");
+        peop.add("钱家真理部");
+        peop.add("孙家传话筒");
 
-        peop.add("血汗工厂老板");
+        peop.add("血汗工厂老板李氏");
         peop.add("学校校长");
         peop.add("规划院");
 
@@ -103,17 +103,17 @@ public class SCC {
         SymblowDigraph sd;
         sd = new SymblowDigraph(peop);
         sd.addEdge("维尼", "赵家家丁");
-        sd.addEdge("维尼", "赵家真理部");
-        sd.addEdge("赵家真理部", "赵家家丁");
-        sd.addEdge("赵家家丁", "赵家传话筒");
-        sd.addEdge("赵家真理部", "赵家传话筒");
-        sd.addEdge("赵家传话筒", "赵家真理部");
+        sd.addEdge("维尼", "钱家真理部");
+        sd.addEdge("钱家真理部", "赵家家丁");
+        sd.addEdge("赵家家丁", "孙家传话筒");
+        sd.addEdge("钱家真理部", "孙家传话筒");
+        sd.addEdge("孙家传话筒", "赵家真理部");
 
-        sd.addEdge("赵家真理部", "学校校长");
-        sd.addEdge("赵家传话筒", "血汗工厂老板");
-        sd.addEdge("赵家传话筒", "规划院");
+        sd.addEdge("钱家真理部", "学校校长");
+        sd.addEdge("孙家传话筒", "血汗工厂老板李氏");
+        sd.addEdge("孙家传话筒", "规划院");
 
-        sd.addEdge("血汗工厂老板", "人力资源");
+        sd.addEdge("血汗工厂老板李氏", "人力资源");
         sd.addEdge("人力资源", "野猴子");
         sd.addEdge("人力资源", "屁民");
         sd.addEdge("屁民", "人力资源");
