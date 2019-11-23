@@ -1,5 +1,7 @@
 package com.ex.cy.demo4.alg.heap;
 
+import java.util.PriorityQueue;
+
 public class BinHeap {
     long[] a;
     int size = 16;          //数组大小
@@ -25,6 +27,7 @@ public class BinHeap {
 
     //动态扩容
     private void reSize() {
+        PriorityQueue pq;
         if (count < size - 1)
             return;
         long[] a2 = new long[size << 1];

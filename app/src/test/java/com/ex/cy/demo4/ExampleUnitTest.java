@@ -15,4 +15,3 @@ package com.ex.cy.demo4;
 //        assertEquals(4, 2 + 2);
 //    }
 //}
-//有没有telegram之类的？我们不用 麻花疼的

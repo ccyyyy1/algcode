@@ -3,6 +3,7 @@ package com.ex.cy.demo4.alg.graph.di;
 import android.support.annotation.NonNull;
 
 import com.ex.cy.demo4.alg.graph.Graph;
+import com.ex.cy.demo4.alg.graph.pub.Vertex;
 
 import java.util.Iterator;
 
@@ -11,28 +12,20 @@ import java.util.Iterator;
 // 填充=4，32机器字长
 // Digraph : 16+4+                                  （对象头 + 填充）
 // int e : 4
-// Digraph.Vertex[] vs : 24+8*V+ (16+4+8+4)*E +     （对象头 + 数组长 + 填充 + 对象引用*V个顶点 + E个边*(对象头+int v + 对象引用 + 填充)）
+// Vertex[] vs : 24+8*V+ (16+4+8+4)*E +     （对象头 + 数组长 + 填充 + 对象引用*V个顶点 + E个边*(对象头+int v + 对象引用 + 填充)）
 // = 20 + 4 + 24+8V + 32E
 // = 48+8V+32E
 public class Digraph {
-    public static class Vertex {
-        public int v;
-        public Digraph.Vertex n;
 
-        public Vertex(int v) {
-            this.v = v;
-        }
-    }
-
-    Digraph.Vertex[] vs; //邻接表数组
+    Vertex[] vs; //邻接表数组
     int e;
 
     public Digraph(int vCount) {
-        vs = new Digraph.Vertex[vCount];
+        vs = new Vertex[vCount];
     }
 
     public Digraph(Graph g) {
-        vs = new Digraph.Vertex[g.v()];
+        vs = new Vertex[g.v()];
         for (int u = 0; u < g.v(); u++) {
             for (int v : g.adj(u))
                 addEdge(u, v);
@@ -40,7 +33,7 @@ public class Digraph {
     }
 
     public void addEdge(int v, int w) {
-        Digraph.Vertex vwvic = new Digraph.Vertex(w);
+        Vertex vwvic = new Vertex(w);
         vwvic.n = vs[v];
         vs[v] = vwvic;
         e++;
@@ -73,10 +66,10 @@ public class Digraph {
     }
 
     public static class VertexIt implements Iterable {
-        Digraph.VertexItor vi;
+        VertexItor vi;
 
-        public VertexIt(Digraph.Vertex h) {
-            vi = new Digraph.VertexItor(h);
+        public VertexIt(Vertex h) {
+            vi = new VertexItor(h);
         }
 
         @NonNull
@@ -87,9 +80,9 @@ public class Digraph {
     }
 
     public static class VertexItor implements Iterator {
-        Digraph.Vertex h;
+        Vertex h;
 
-        public VertexItor(Digraph.Vertex h) {
+        public VertexItor(Vertex h) {
             this.h = h;
         }
 
@@ -100,7 +93,7 @@ public class Digraph {
 
         @Override
         public Object next() {
-            Digraph.Vertex tmp = h;
+            Vertex tmp = h;
             h = h.n;
             return tmp.v;
         }
@@ -112,7 +105,7 @@ public class Digraph {
     }
 
     public Iterable<Integer> adj(int v) {
-        return new Digraph.VertexIt(vs[v]);
+        return new VertexIt(vs[v]);
     }
 
     @Override

@@ -2,17 +2,11 @@ package com.ex.cy.demo4.alg.graph;
 
 import android.support.annotation.NonNull;
 
+import com.ex.cy.demo4.alg.graph.pub.Vertex;
+
 import java.util.Iterator;
 
 public class Graph {
-    public static class Vertex {
-        public int v;
-        public Vertex n;
-
-        public Vertex(int v) {
-            this.v = v;
-        }
-    }
 
     Vertex[] vs; //邻接表数组
     int e;
