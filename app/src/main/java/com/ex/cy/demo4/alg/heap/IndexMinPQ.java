@@ -10,7 +10,7 @@ public class IndexMinPQ<T extends Comparable<T>> {
     int[] k2n;          //k->N  ,从1开始，0是哨兵
     T items[];          //k->Item   ，从1开始，0是哨兵
     final int maxN;     //最大索引数
-    int size;              //当前数据个数
+    int N;              //当前数据个数
 
     public IndexMinPQ(int maxN) {
         this.maxN = maxN;
@@ -40,11 +40,11 @@ public class IndexMinPQ<T extends Comparable<T>> {
             throw new RuntimeException("already contain K:" + k + " item:" + items[pqueue[k]]);
 //            return;
         }
-        size++;
-        k2n[k] = size;         //k->size
-        pqueue[size] = k;      //size->k
+        N++;
+        k2n[k] = N;         //k->N
+        pqueue[N] = k;      //N->k
         items[k] = item;
-        swimUp(size);
+        swimUp(N);
     }
 
     public void change(int k, T item) {
@@ -54,20 +54,20 @@ public class IndexMinPQ<T extends Comparable<T>> {
     }
 
     public T top() {
-        if (size > 0)
+        if (N > 0)
             return items[pqueue[1]];
         return null;
     }
 
     public T delTop() {
-        if (size < 1)
+        if (N < 1)
             return null;
-        T top = items[pqueue[1]];   //删除最顶
-        items[pqueue[1]] = null;
-        k2n[pqueue[1]] = -1;
-        pqueue[1] = pqueue[size];      //最低的换到最顶，做sink
-        pqueue[size] = 0;              //将最低的残留k值清除
-        size--;
+        T top = items[pqueue[1]];   //保留删除的最顶
+        exch(1, N);                 //最低的换到最顶，做sink
+        items[pqueue[N]] = null;    //删掉换到最低的最顶
+        k2n[pqueue[N]] = -1;
+        pqueue[N] = 0;
+        N--;
         sinkDown(1);
         return top;
     }
@@ -76,8 +76,8 @@ public class IndexMinPQ<T extends Comparable<T>> {
         if (k2n[k] == -1)
             return null;
         T tDel = items[k];
-        pqueue[k2n[k]] = pqueue[size]; //最低的换到当前
-        size--;
+        pqueue[k2n[k]] = pqueue[N]; //最低的换到当前
+        N--;
         swimUp(k2n[k]);             //将换过来的做 swim，sink ，堆有序化
         sinkDown(k2n[k]);
         k2n[k] = -1;                //删除目标k对应的n
@@ -86,17 +86,17 @@ public class IndexMinPQ<T extends Comparable<T>> {
     }
 
     public int topIndex() {
-        if (size > 0)
+        if (N > 0)
             return pqueue[1];
         return -1;
     }
 
     public boolean isEmpty() {
-        return size < 1;
+        return N < 1;
     }
 
     public int size() {
-        return size;
+        return N;
     }
 
     private void swimUp(int n) {
@@ -107,7 +107,7 @@ public class IndexMinPQ<T extends Comparable<T>> {
             T ct = items[pqueue[child]];
             if (pt.compareTo(ct) < 0)
                 break;
-            exchg(parent, child);
+            exch(parent, child);
             child = parent;
             parent = child / 2;
         }
@@ -118,11 +118,11 @@ public class IndexMinPQ<T extends Comparable<T>> {
         int lchild = parent * 2;
         int rchild = lchild + 1;
         int targetChild;
-        while (lchild <= size || rchild <= size) {
+        while (lchild <= N || rchild <= N) {
             T pt = items[pqueue[parent]];
             T tc = null;
             targetChild = lchild;       //默认用left child，当 lchild == rchild value 的时候,或不存在rchild的时候
-            if (rchild < size) {           //targetChild ，找到2个child中更小的那个
+            if (rchild < N) {           //targetChild ，找到2个child中更小的那个
                 int rcmpl = items[pqueue[rchild]].compareTo(items[pqueue[lchild]]);
                 if (rcmpl < 0)          //若 rchild 更小
                     targetChild = rchild;
@@ -130,27 +130,30 @@ public class IndexMinPQ<T extends Comparable<T>> {
             tc = items[pqueue[targetChild]];
             if (pt.compareTo(tc) < 0)
                 break;
-            exchg(parent, targetChild);
+            exch(parent, targetChild);
             parent = targetChild;
             lchild = parent * 2;
             rchild = lchild + 1;
         }
     }
 
-    private void exchg(int n1, int n2) {
-        int tmp = pqueue[n1];
+    private void exch(int n1, int n2) {
+        int tmp = pqueue[n1];       //[n]->k
         pqueue[n1] = pqueue[n2];
         pqueue[n2] = tmp;
+        tmp = k2n[pqueue[n1]];      //[k]->n
+        k2n[pqueue[n1]] = k2n[pqueue[n2]];
+        k2n[pqueue[n2]] = tmp;
     }
 
     @Override
     public String toString() {
         return "IndexMinPQ{" +
-                "pqueue[size]=k =" + Arrays.toString(pqueue) +
-                ", \nk2n[k]=size =" + Arrays.toString(k2n) +
+                "pqueue[N]=k =" + Arrays.toString(pqueue) +
+                ", \nk2n[k]=N =" + Arrays.toString(k2n) +
                 ", \nitems[k]=O =" + Arrays.toString(items) +
                 ", \nmaxN=" + maxN +
-                ", \nsize=" + size +
+                ", \nN=" + N +
                 '}';
     }
 
@@ -183,7 +186,7 @@ public class IndexMinPQ<T extends Comparable<T>> {
         System.out.println("====");
         Random r = new Random(123);
         while (ipq.size() < ipq.getMaxN()) {
-            ipq.insert(ipq.size()+1, r.nextInt(100));
+            ipq.insert(ipq.size() + 1, r.nextInt(100));
         }
         while (!ipq.isEmpty()) {
             System.out.println("k: " + ipq.topIndex() + " v:" + ipq.delTop());
