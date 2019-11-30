@@ -6,6 +6,8 @@ public class StringCmp {
     //
     //1.BF burst force 暴力比较，逐个字符比较
     //2.RK 以hash算法为主，比较字符串
+    //3.BM 好后缀，坏字符，一次尽量往后滑动更多距离
+    //4.KMP 好前缀
 
     //BF  时间复杂度 O(n*m)
     //在A中进行 A[0,n-m] 范围内的 n-m+1 次的 m个字符比较
@@ -88,6 +90,10 @@ public class StringCmp {
     //坏字符：在B中寻找最靠右（下标最大）的相同字符下标
     //好后缀：在B中寻找最靠右（下标最大）的相同好后缀，及好后缀子串的下标
     //       (例如好后缀是abcd,那么好后缀子串有bcd,cd,d这3个(从右侧开始框选))
+    // 思路：
+    // 先用坏字符策略，在B串中从右往左找到下标j，若j<m，说明j的右侧有匹配成功的好后缀
+    // 如果没有好后缀，B向右移动坏字符在B中最大下标个位置
+    // 如果有好后缀，
 
     //在坏字符方式中，用于以hash方式快速找到某个坏字符在b串中的最大下标，用于做b串的快速向右滑动
     private static int[] BMInitBadCharTable(char b[]) {
@@ -118,7 +124,7 @@ public class StringCmp {
 
             int k = b.length - 1 - j;               //获取匹配成功的好后缀长度 ,取值范围[1, b.len-1],至少1个字符 至 最大长度-1 个
             int badOff = j - bctab[a[i + j]];       //获取坏字符向后滑动量
-            int goodOff = 0;                        //好后缀默认向后滑动 0
+            int goodOff = 0;                        //好后缀向后滑动
 
             if (j < b.length - 1)                   //如果有好后缀的话，也就是说坏字符j不是第一个在b串中出现，那么使用好后缀匹配规则
                 goodOff = getGoodOff(b.length, j, k);
@@ -130,25 +136,22 @@ public class StringCmp {
 
     //m=b串长度，j=坏字符在b串中下标，k=好后缀匹配长度
     private static int getGoodOff(int m, int j, int k) {
-        int goodOff;
-        goodOff = m;
-        //优先从已匹配好的k位后缀子串中的1位开始找，直到k位，先找prefix是否匹配，
-        // 因为prefix匹配的话一次可以让b串往后滑最多的位数
+        int goodOff = m;                            //1.当好后缀既没有匹配k个字符，也没有匹配k个字符的子串（prefix），那么默认向后移动整个b串长度m
         if (suffix[k] != -1)
-            goodOff = j - suffix[k] + 1;
-        else {
-            for (int r = j + 2; r < k; r++) {       //m-r = 好后缀位子串位数, r=b串长度-好后缀子串位数,从位数多找到位数少
+            goodOff = j - suffix[k] + 1;            //2.存在和当前k个好后缀匹配的情况，返回最大下标，下标应该小于等于j，所以这里goodOff至少是1~+
+        else {                                      //3.若存在小于k位的子串的前缀，那么返回 r （= k-子串长度），表示b串应该向后滑动r位，从长子串到短子串遍历 (k-1 ~ 1)
+            for (int r = j + 2; r < m; r++) {       //m-r = 好后缀位子串位数, r=b串长度-好后缀子串位数,从位数多找到位数少
                 if (prefix[m - r]) {                // b ----j--|---------------- m长
-                    goodOff = r;                    //  \-r-->/ \- 好后缀 k-2 --/  起始应该是-1，再多减了1是因为 prefix是从下标1开始的
+                    goodOff = r;                    //   \-r-->/ \- 好后缀 k-2 --/  起始是-1，再多减了1是因为 prefix是从下标1开始的
                     break;                          //             m-r
                 }
             }
         }
-        return goodOff;
+        return goodOff;                             //可能的返回值,m,1~j（等于1~m-k）,j+2~<k ,不会有负数
     }
 
     static boolean[] prefix;                        //下标k=后缀子串字符个数,k个字符的后缀子串是否出现在B串头部
-    static int[] suffix;                            //下标k=后缀子串字符个数,k个字符的后缀子串出现在B串的最靠右（最大）下标
+    static int[] suffix;                            //下标k=后缀子串字符个数,k个字符的后缀子串出现在B串的除了子串本身的最靠右（最大）下标（子串本身是最靠右的，那么记录除了字串本身第二靠右的下标）
     private static void BMInitGoodSuffix(char[] b) {//初始化 b串的好后缀匹配缓存，类似于 坏字符做缓存的目的，用于加速匹配过程，直接用 k（后缀长度）查找 b串中匹配的好后缀最大下标值
         //初始化                                     //例如 b = abcde
         prefix = new boolean[b.length + 1];         //从[1] 开始
@@ -182,5 +185,9 @@ public class StringCmp {
 //        System.out.println("BF(a,b) " + BF(a, b));
 //        System.out.println("RK(a, b) " + RK(a, b));
         System.out.println("BM(a, b) " + BM(a, b));
+
+        String astr = new String(a);
+        astr.indexOf("def"); //逐字符比较 BF算法
+//        astr.startsWith(); 逐字符比较 BF算法
     }
 }
