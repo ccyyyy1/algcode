@@ -1,7 +1,5 @@
 package com.ex.cy.demo4.alg.graph.di;
 
-import android.support.annotation.NonNull;
-
 import com.ex.cy.demo4.alg.graph.Graph;
 import com.ex.cy.demo4.alg.graph.pub.Vertex;
 
@@ -10,7 +8,7 @@ import java.util.Iterator;
 //有向图
 //内存：s
 // 填充=4，32机器字长
-// Digraph : 16+4+                                  （对象头 + 填充）
+// Digraph : 16+4+                          （对象头 + 填充）
 // int e : 4
 // Vertex[] vs : 24+8*V+ (16+4+8+4)*E +     （对象头 + 数组长 + 填充 + 对象引用*V个顶点 + E个边*(对象头+int v + 对象引用 + 填充)）
 // = 20 + 4 + 24+8V + 32E
@@ -72,7 +70,6 @@ public class Digraph {
             vi = new VertexItor(h);
         }
 
-        @NonNull
         @Override
         public Iterator iterator() {
             return vi;

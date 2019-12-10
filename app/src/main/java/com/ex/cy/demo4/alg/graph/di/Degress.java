@@ -3,6 +3,7 @@ package com.ex.cy.demo4.alg.graph.di;
 import java.util.ArrayList;
 import java.util.List;
 
+//计算一个有向图的 任意顶点 v的 出度，入度
 public class Degress {
     int[] inDegress;
     int[] outDegress;

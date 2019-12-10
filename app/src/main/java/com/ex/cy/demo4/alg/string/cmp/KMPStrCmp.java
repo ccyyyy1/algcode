@@ -1,4 +1,4 @@
-package com.ex.cy.demo4.alg.string;
+package com.ex.cy.demo4.alg.string.cmp;
 
 import java.util.Arrays;
 
@@ -26,7 +26,7 @@ public class KMPStrCmp {
         int j = 0;
         for (int i = 0; i < a.length; i++) {
             while(j>0 && a[i] != b[j])
-                j = next[j-1]+1;
+                j = next[j-1]+1;    //? 当前第j个不匹配时， 将当前位置j，回溯到 前一个匹配者j-1 的最大匹配下标的下一个字符作为j的指向，再次比对
             if (a[i] == b[j])
                 j++;
             if (j == b.length)

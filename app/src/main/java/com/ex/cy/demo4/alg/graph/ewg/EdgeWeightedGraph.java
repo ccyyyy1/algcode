@@ -7,9 +7,9 @@ import java.util.List;
 
 //加权无向图
 public class EdgeWeightedGraph {
-    LinkedList<Edge>[] edges;
-    final int v;
-    int e;
+    LinkedList<Edge>[] edges;               //边的集合
+    final int v;                            //顶点数量
+    int e;                                  //边的数量
 
     public EdgeWeightedGraph(int v) {
         this.v = v;
@@ -22,8 +22,11 @@ public class EdgeWeightedGraph {
     public void addEdge(int v, int w, float weight) {
         addEdge(new Edge(v, w, weight));
     }
+    public void addEdge(int v, int w, float weight, String name) {
+        addEdge(new Edge(v, w, weight, name));
+    }
 
-    public void addEdge(Edge e) {
+    public void addEdge(Edge e) {           //添加一条边，在无向图中等于向2边顶点添加边(互相连通)
         edges[e.v].add(e);
         edges[e.w].add(e);
         this.e++;
@@ -33,12 +36,12 @@ public class EdgeWeightedGraph {
         return edges[v];
     }
 
-    //所有边
+    //返回所有边的集合
     public Iterable<Edge> edges() {
         List<Edge> es = new LinkedList<>();
         for (int v = 0; v < edges.length; v++) {
             for (Edge e : adj(v)) {
-                if (e.other(v) > v) //加入顺序： 顶点序号逆序
+                if (e.other(v) > v)           //加入顺序： 顶点序号逆序
                     es.add(e);
             }
         }

@@ -1,82 +1,9 @@
-package com.ex.cy.demo4.alg.string;
+package com.ex.cy.demo4.alg.string.cmp;
 
-//字符串匹配
-public class StringCmp {
-    //约定：A主串长 n ，B模式串 长m。要求：在A串中找到B串匹配的下标
-    //
-    //1.BF burst force 暴力比较，逐个字符比较
-    //2.RK 以hash算法为主，比较字符串
-    //3.BM 好后缀，坏字符，一次尽量往后滑动更多距离
-    //4.KMP 好前缀
-
-    //BF  时间复杂度 O(n*m)
-    //在A中进行 A[0,n-m] 范围内的 n-m+1 次的 m个字符比较
-    //平时最容易理解的方式
-    public static int BF(char[] a, char[] b) {
-        for (int i = 0; i < a.length - b.length + 1; i++) {
-            for (int j = 0; j < b.length; j++) {
-                if (a[i + j] != b[j])
-                    break;
-                else if (j + 1 == b.length)
-                    return i;
-            }
-        }
-        return -1;
-    }
-
-    //在A串中 从一个起始位置i，选取 A[i]~A[i+m] 共m个字符，计算其hash值(h1)  i+m 不超过A的最大长度，也就是 i = [0,n-m] 范围
-    //hash算法为 字符的取值个数，如只考虑a-z，共26个字母，算作R进制（26进制），那么一个3个字符的字符串的hash为 a1*R^2 + a2*R^1 + a3*R^0  (a1为高位，a3为低位)
-    //随着 i自增1，向后移动一个起始位置后，还是做同样的hash计算(h2)
-    //此时发现有规律 h2=（h1-a1*R^m-1）* R + a4*R^0
-    //所以把A扫一遍计算 hash，在对每次算到的hash和 hashB 比较，一致说明有字符串匹配，如果考虑hash碰撞，则再次挨个比较字符即可（BF算法）
-    //时间复杂度 O(n)
-    public static int RK(char[] a, char[] b) {
-        int m = b.length;
-        RKinit(m);
-        long hashB = RKHash(b, 0, m);
-        long[] hashA = new long[a.length - b.length + 1];
-
-        hashA[0] = RKHash(a, 0, m);
-        if (hashA[0] == hashB)
-            return 0;
-        for (int i = 1; i < hashA.length; i++) {
-            hashA[i] = (hashA[i - 1] - (a[i - 1] * RpowN[m - 1])) * R + a[i + m - 1];
-            if (hashA[i] == hashB)
-                return i;
-        }
-        return -1;
-    }
-
-    static final int R = 256; //256进制 ASCII码表范围
-    static long[] RpowN = new long[4];
-    static boolean inited;
-
-    private static void RKinit(int blen) {  //初始化R的N次方的缓存表
-        long[] tmp;
-        int startI = 2;
-        if (blen > RpowN.length) {
-            tmp = new long[blen];
-            startI = RpowN.length;
-            RpowN = tmp;
-            System.arraycopy(RpowN, 0, tmp, 0, RpowN.length);
-            inited = false;
-        }
-        if (inited == false) {
-            RpowN[0] = 1;
-            RpowN[1] = R;
-            for (int i = startI; i < RpowN.length; i++)
-                RpowN[i] = (long) Math.pow(R, i);
-            inited = true;
-        }
-    }
-
-    public static long RKHash(char[] a, int off, int len) {
-        long hashR = 0;
-        for (int i = 0; i < len; i++) {        //从高位到低位 a1*R^len + a2*R^len-1 + ....alen*R^0
-            hashR += RpowN[len - i - 1] * a[off + i];
-        }
-        return hashR;
-    }
+//好后缀，坏字符。 为了让b串(模式串)一次尽量往后滑动更多距离
+public class BMStrCmp {
+/*
+第一次写
 
     //BM算法：从B串和A串尾部开始比较，希望一次将B串向后滑动尽量多的位数，
     //       以跳过不匹配的情况，理想情况的时间复杂度是 O(n/m)
@@ -152,6 +79,7 @@ public class StringCmp {
 
     static boolean[] prefix;                        //下标k=后缀子串字符个数,k个字符的后缀子串是否出现在B串头部
     static int[] suffix;                            //下标k=后缀子串字符个数,k个字符的后缀子串出现在B串的除了子串本身的最靠右（最大）下标（子串本身是最靠右的，那么记录除了字串本身第二靠右的下标）
+
     private static void BMInitGoodSuffix(char[] b) {//初始化 b串的好后缀匹配缓存，类似于 坏字符做缓存的目的，用于加速匹配过程，直接用 k（后缀长度）查找 b串中匹配的好后缀最大下标值
         //初始化                                     //例如 b = abcde
         prefix = new boolean[b.length + 1];         //从[1] 开始
@@ -179,15 +107,80 @@ public class StringCmp {
         }
     }
 
-    public static void main(String[] args) {
-        char[] a = "abcdefg".toCharArray();
-        char[] b = "def".toCharArray();
-//        System.out.println("BF(a,b) " + BF(a, b));
-//        System.out.println("RK(a, b) " + RK(a, b));
-        System.out.println("BM(a, b) " + BM(a, b));
+*/
 
-        String astr = new String(a);
-        astr.indexOf("def"); //逐字符比较 BF算法
-//        astr.startsWith(); 逐字符比较 BF算法
+//第二次写
+    private static int[] BMInitBadChar(char[] b) {
+        int CHAR_SPACE = 256; //换成基于统计的,散列表吧,否则UNICODE的话，太多空白项，数组会变得稀疏，浪费太多空间
+        int[] bc = new int[CHAR_SPACE];
+        for (int i = 0; i < bc.length; i++)
+            bc[i] = -1;
+        for (int i = 0; i < b.length; i++)
+            bc[b[i]] = i;
+        return bc;
+    }
+
+    static boolean[] prefix;
+    static int[] surffix;
+
+    private static void BMInitGoodSuffix(char[] b) {
+        int m = b.length;
+        surffix = new int[m + 1];
+        prefix = new boolean[m + 1];
+        int k;
+        int j;
+        for (int i = 0; i < m - 1; i++) {//[0123]4
+            j = i;
+            k = 0;
+            while (j <= 0 && b[m - 1 - k] == b[j]) {
+                k++;
+                surffix[k] = j;
+                j--;
+            }
+            if (j < 0)
+                prefix[k] = true;
+        }
+    }
+
+    public static int BM(char[] a, char[] b) {
+        int[] bc = BMInitBadChar(b);
+        BMInitBadChar(b);
+        int n = a.length;
+        int m = b.length;
+
+        int i = 0;
+        int j;
+        for (; i <= n - m; i++) {
+            for (j = m - 1; j >= 0; j--) {
+                if (b[j] != a[i + j])
+                    break;
+            }
+            if (j < 0)
+                return i;
+            int badSeek = j - bc[a[i + j]];
+            int goodSeek = 0;
+            if (j < m - 1) {
+                goodSeek = findGoodSeek(m, j);
+            }
+            i = i + Math.max(badSeek, goodSeek);
+        }
+        return -1;
+    }
+
+    //HARD
+    private static int findGoodSeek(int m, int j) {
+        int k = m - 1 - j;
+        int goodSeek = m;
+        if (surffix[k] != -1)
+            goodSeek = j - surffix[k] + 1;
+        else {
+            for (int r = j + 2; r < m; r++) {
+                if (prefix[m - r]) {
+                    goodSeek = r;
+                    break;
+                }
+            }
+        }
+        return goodSeek;
     }
 }

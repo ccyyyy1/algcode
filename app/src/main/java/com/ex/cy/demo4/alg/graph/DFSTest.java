@@ -4,6 +4,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Stack;
 
+//无向图的可达性分析
+//给处无向图g，和起点s，并限定步数maxRadias，求可到达的最远顶点集合
 public class DFSTest {
     Graph g;
     int maxRadias;

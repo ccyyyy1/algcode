@@ -9,21 +9,21 @@ import java.util.List;
 //Prim算法的 最小生成树
 //时间 ElogE                              E为遍历原图中每条边，logE为优先队列(二叉堆)找到最小权重边的平均成本
 //空间 V-1条Edge + V个顶点
-public class LazyPrimMST implements MST {
+public class LazyPrimMst implements Mst {
     EdgeWeightedGraph orgEwg;    //原始加权图
     EdgeWeightedGraph singleEwg; //只有最小生成树的加权图
     List<Edge> edges;            //最小生成树的边
     boolean[] marked;            //顶点的访问
-    float weightSum;
+    float weightSum = Float.POSITIVE_INFINITY;
 
-    public LazyPrimMST(EdgeWeightedGraph ewg) {
+    public LazyPrimMst(EdgeWeightedGraph ewg) {
         this.orgEwg = ewg;
         edges = new LinkedList<>();
         marked = new boolean[ewg.v];
         weightSum = 0;
 
         //只考虑一个连通图的情况
-        //TODO排除有多个子图的情况
+        //改进：排除有多个子图的情况
         //假设 ewg 是连通的
 
         BinHeap2<Edge> pqedges = new BinHeap2<Edge>();
@@ -35,16 +35,16 @@ public class LazyPrimMST implements MST {
 //        }
 
         //2.
-        visit2(pqedges,0);
-        while(!pqedges.isEmpty()){
+        visit2(pqedges, 0);
+        while (!pqedges.isEmpty()) {
             Edge e = pqedges.pop();
             int v = e.either();
             int w = e.other(v);
-            if(marked[v] && marked[w])                      //已失效的横切边不处理
+            if (marked[v] && marked[w])                      //已失效的横切边不处理
                 continue;
             edges.add(e);                                   //将权重最小的加入到MST中
-            if(!marked[v]) visit2(pqedges, v);
-            if(!marked[w]) visit2(pqedges, w);
+            if (!marked[v]) visit2(pqedges, v);
+            if (!marked[w]) visit2(pqedges, w);
         }
 
         //将找到的最小生成树转换为一个 EWG对象
@@ -95,7 +95,8 @@ public class LazyPrimMST implements MST {
 
     @Override
     public float weight() {
-        if (weightSum == 0) {
+        if (weightSum == Float.POSITIVE_INFINITY && edges.size() > 0) {
+            weightSum = 0;
             for (Edge e : edges) {
                 weightSum += e.weight();
             }
@@ -108,39 +109,30 @@ public class LazyPrimMST implements MST {
     }
 
     public static void main(String[] args) {
-        // 0-------1
-        // |\     /|
-        // | \   / |
-        // |  -2-  |
-        // +-------3
-        for (; f1() && f2(); )
-            System.out.println("1");
+        // 村口         二狗子家
+        // 0--------------1
+        // |\            /|
+        // | \   你家    / |
+        // |  -----2----  |
+        // |              |
+        // +---------3----+
+        //          希望小学
 
         EdgeWeightedGraph ewg = new EdgeWeightedGraph(4);
-        ewg.addEdge(0, 1, 1);
-        ewg.addEdge(0, 2, 2);
-        ewg.addEdge(0, 3, 3);
-        ewg.addEdge(1, 2, 4);
-        ewg.addEdge(1, 3, 1.1f);
+        ewg.addEdge(0, 1, 2, "二麻二麻路");
+        ewg.addEdge(0, 2, 3, "挨打巷西段");
+        ewg.addEdge(0, 3, 4, "挨打巷东段");
+        ewg.addEdge(1, 2, 3.5f, "恶犬巷");
+        ewg.addEdge(1, 3, 2.5f, "希望之路");
         System.out.println(ewg);
         System.out.println("=======");
 
-        LazyPrimMST lp = new LazyPrimMST(ewg);
-        System.out.println("lp.weight() " + lp.weight());
+        LazyPrimMst lp = new LazyPrimMst(ewg);
+        System.out.println("最小生成树权重总和(村里主干道总长度): " + lp.weight());
         for (Edge e : lp.edges()) {
-            System.out.print(e + ", ");
+            System.out.println(e.either() + "和" + e.other(e.either()) + "之间的路[" + e.name + "], 路长:" + e.weight());
         }
         System.out.println("\n=======");
         System.out.println(lp.getSingleEWGraph());
-    }
-
-    private static boolean f1() {
-        System.out.println("f1");
-        return false;
-    }
-
-    private static boolean f2() {
-        System.out.println("f2");
-        return false;
     }
 }

@@ -5,12 +5,20 @@ import android.support.annotation.NonNull;
 public class Edge extends Vertex implements Comparable<Edge> {
     public int w;
     public float weight;
+    public String name;
 
     //from - to
     public Edge(int v, int w, float weight) {
         super(v);
         this.w = w;
         this.weight = weight;
+    }
+
+    public Edge(int v, int w, float weight, String name) {
+        super(v);
+        this.w = w;
+        this.weight = weight;
+        this.name = name;
     }
 
     public float weight() {

@@ -13,7 +13,7 @@ public class FriendDegree {
     int maxDegree;
     LinkedList<Integer> maxDegrees = new LinkedList<>();
 
-    public FriendDegree(Graph g, int s) {
+    public FriendDegree(Graph g, int s) { //起点s相对于自己是0个degrees（度）
         this.s = s;
         this.g = g;
         degrees = new int[g.v()];
@@ -47,11 +47,11 @@ public class FriendDegree {
         }
     }
 
-    public int degressTo(int v) {
+    public int degressTo(int v) {//从起点到v点所需的成本，间隔多少个度
         return degrees[v];
     }
 
-    public List<Integer> degreeEq(int deg) {
+    public List<Integer> degreeEq(int deg) {    //从起点到指定deg（度）有哪些顶点
         List<Integer> res = new LinkedList<Integer>();
         for (int i = 0; i < degrees.length; i++) {
             if (degrees[i] == deg)
@@ -69,24 +69,24 @@ public class FriendDegree {
     }
 
     public static void main(String[] args) {
-        String[] names = new String[]{"张三", "李四", "王五", "赵家人", "钱七", "孙八"};
+        String[] names = new String[]{"野张三", "李四", "王五", "赵家六", "钱七", "孙八"};
         ArrayList<String> nl = new ArrayList<String>();
         for (String s : names) {
             nl.add(s);
         }
         SymblowGraph sg = new SymblowGraph(nl);
-        sg.addEdge("张三", "李四");
-        sg.addEdge("张三", "王五");
+        sg.addEdge("野张三", "李四");
+        sg.addEdge("野张三", "王五");
         sg.addEdge("王五", "钱七");
-        sg.addEdge("孙八", "赵家人");
-        sg.addEdge("钱七", "赵家人");//藏在深处的赵家人
+        sg.addEdge("孙八", "赵家六");
+        sg.addEdge("钱七", "赵家六");//藏在深处的赵家六
 
         Graph g = sg.getGraph();
-        String sname = "张三";
-        String toname = "赵家人";
+        String sname = "野张三";
+        String toname = "赵家六";
 
         System.out.println("------------------------");
-        System.out.println("|六度关系之藏在深处的赵家人|");
+        System.out.println("|六度关系之藏在深处的赵家六|");
         System.out.println("------------------------");
 
         BFSPathTest zhang2zhaoP = new BFSPathTest(g, sg.getIndex(sname));
@@ -114,7 +114,7 @@ public class FriendDegree {
         List<Integer> mdlist = zhaoFD.getMaxDegrees();
         for (int i : mdlist) {
             System.out.print(sg.getSymblow(i) + "");
-            System.out.println("\n\t" + sg.getSymblow(i) + " 如何认识赵家人? ");
+            System.out.println("\n\t" + sg.getSymblow(i) + " 如何认识赵家六? ");
             BFSPathTest far2zhao = new BFSPathTest(g, i);
             List<Integer> p2z = far2zhao.pathTo(sg.getIndex(toname));
             for(int j : p2z){
@@ -123,3 +123,8 @@ public class FriendDegree {
         }
     }
 }
+
+/*
+
+
+* */
