@@ -19,14 +19,14 @@ public class Topological {
     public Topological(Digraph dg) {
         this.dg = dg;
         dc = new DirectedCycle(dg);
-        if (!dc.hasCycle()) {
+        if (!dc.hasCycle()) {               //若存在环，则不计算拓扑排序
             dfo = new DFOrder(dg);
             order = dfo.reversePost();      //拓扑排序会用到深度优先
         }
         this.dg = null;
     }
 
-    public boolean isDAG() {                //是不是
+    public boolean isDAG() {                //是有向无环图吗？
         return null != order;
     }
 
@@ -36,33 +36,33 @@ public class Topological {
 
     public static void main(String[] args) {
         List<String> books = new LinkedList<>();
-        books.add("出生");
-        books.add("语文");
-        books.add("数学");
-        books.add("手工");
-        books.add("音乐");
-        books.add("美术");
-        books.add("体育");
-        books.add("考试");
-        books.add("被资本家剥削");
-        books.add("资本家被政治家剥削");
-        books.add("你孩子被你生出来垫背");
+        books.add("小鱼");
+        books.add("泥巴");
+        books.add("赵家六");
+        books.add("虾子");
+        books.add("大鱼");
+        books.add("牧羊犬");
+        books.add("饲料");
+        books.add("廉价劳动力");
         SymblowDigraph sd = new SymblowDigraph(books);
-        sd.addEdge("出生", "语文");
-        sd.addEdge("语文", "数学");
-        sd.addEdge("语文", "手工");
-        sd.addEdge("手工", "音乐");
-        sd.addEdge("手工", "美术");
-        sd.addEdge("体育", "考试");
-        sd.addEdge("数学", "考试");
-        sd.addEdge("考试", "被资本家剥削");
-        sd.addEdge("被资本家剥削", "资本家被政治家剥削");
-        sd.addEdge("资本家被政治家剥削", "你孩子被你生出来垫背");
+        sd.addEdge("泥巴", "虾子");
+        sd.addEdge("虾子", "小鱼");
+        sd.addEdge("饲料", "小鱼");
+        sd.addEdge("小鱼", "大鱼");
+        sd.addEdge("小鱼", "廉价劳动力");
+        sd.addEdge("小鱼", "牧羊犬");
+        sd.addEdge("大鱼", "牧羊犬");
+        sd.addEdge("廉价劳动力", "牧羊犬");
+        sd.addEdge("大鱼", "赵家六");
+        sd.addEdge("牧羊犬", "赵家六");
+        sd.addEdge("廉价劳动力", "赵家六");
+        //泥巴被虾子吃，虾子被小鱼吃，饲料被小鱼吃，小鱼被大鱼吃，小鱼被牧羊犬吃，小鱼被廉价劳动力吃，大鱼被牧羊犬吃，大鱼被赵家六吃，廉价劳动力被牧羊犬吃，牧羊犬被赵家六吃，廉价劳动力被赵家六吃
+        //那么整个食物链的低端（被依赖）到顶端的关系是？
 
         Digraph dg = sd.getGraph();
         Topological top = new Topological(dg);
         if (top.isDAG()) {
-            System.out.println("拓扑序列，优先级高的在低行.");
+            System.out.println("拓扑序列. 被依赖的靠近顶行(并行被依赖的话，前后顺序不重要)");
             for (int i : top.getOrder()) {
                 System.out.println(" " + sd.getSymblow(i));
             }

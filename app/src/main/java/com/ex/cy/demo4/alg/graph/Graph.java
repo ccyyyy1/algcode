@@ -6,6 +6,7 @@ import com.ex.cy.demo4.alg.graph.pub.Vertex;
 
 import java.util.Iterator;
 
+//无向图
 public class Graph {
 
     Vertex[] vs; //邻接表数组

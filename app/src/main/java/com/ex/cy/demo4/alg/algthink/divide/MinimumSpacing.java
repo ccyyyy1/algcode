@@ -132,7 +132,7 @@ public class MinimumSpacing {
         System.out.println(Arrays.toString(points));
 
         int ds = minimumSpacing1D(points, 0, points.length - 1);
-        System.out.println(ds);
+        System.out.println("1维中最近的2个点的间距：" + ds);
     }
 
     public static int minimumSpacing1D(Point[] points, int l, int r) {
@@ -188,7 +188,7 @@ public class MinimumSpacing {
         System.out.println(Arrays.toString(points));
 
         float ds = minimumSpacing2D(points, 0, points.length - 1);
-        System.out.println(ds);
+        System.out.println("2维中最近的2个点的间距：" + ds);
     }
 
     public static float minimumSpacing2D(Point[] points, int l, int r) {

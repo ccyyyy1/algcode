@@ -31,6 +31,13 @@ public class IndexMinPQ<T extends Comparable<T>> {
         return k2n[k] != -1;
     }
 
+    //获取index为k的 Value
+    public T get(int k) {
+        if (!contain(k))
+            return null;
+        return items[k];
+    }
+
     //k 自定义索引， k = [1 ~ maxN] ,下标从1开始
     //item 数据对象
     public void insert(int k, T item) {
